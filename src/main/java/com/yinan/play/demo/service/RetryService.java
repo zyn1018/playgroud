@@ -9,7 +9,7 @@ package com.yinan.play.demo.service;
 /**
  * @author Yinan Zhang (zhangyinan01@corp.netease.com)
  */
-public interface SpringRetryService {
+public interface RetryService {
 
     /**
      * 测试Spring-retry
@@ -37,4 +37,10 @@ public interface SpringRetryService {
      * @return
      */
     boolean recoverTemplate();
+
+    /**
+     * guava-retry
+     * @param param
+     */
+    void guavaRetry(double param);
 }

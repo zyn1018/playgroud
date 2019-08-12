@@ -1,26 +1,29 @@
 package com.yinan.play.demo;
 
-import com.yinan.play.demo.service.SpringRetryService;
+import com.github.rholder.retry.RetryException;
+import com.github.rholder.retry.Retryer;
+import com.github.rholder.retry.RetryerBuilder;
+import com.github.rholder.retry.StopStrategies;
+import com.yinan.play.demo.service.RetryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.remoting.RemoteAccessException;
-import org.springframework.retry.RecoveryCallback;
-import org.springframework.retry.RetryCallback;
-import org.springframework.retry.RetryContext;
 import org.springframework.retry.policy.SimpleRetryPolicy;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Collections;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class DemoApplicationTests {
 
     @Autowired
-    private SpringRetryService springRetryService;
+    private RetryService retryService;
 
     @Test
     public void contextLoads() {
@@ -29,7 +32,7 @@ public class DemoApplicationTests {
     @Test
     public void testRetry() {
         try {
-            springRetryService.testOtherRetry(0.6);
+            retryService.testOtherRetry(0.6);
         } catch (RemoteAccessException e) {
             e.printStackTrace();
         }
@@ -43,19 +46,46 @@ public class DemoApplicationTests {
         template.setRetryPolicy(policy);
 
         //normal
-        template.execute(new RetryCallback<Object, Throwable>() {
-            @Override
-            public Object doWithRetry(RetryContext retryContext) throws Throwable {
-                return springRetryService.testTemplateRetry(0.6);
-            }
-        }, new RecoveryCallback<Object>() {
-            @Override
-            public Object recover(RetryContext retryContext) throws Exception {
-                return springRetryService.recoverTemplate();
-            }
-        });
+//        template.execute(new RetryCallback<Object, Throwable>() {
+//            @Override
+//            public Object doWithRetry(RetryContext retryContext) throws Throwable {
+//                return retryService.testTemplateRetry(0.6);
+//            }
+//        }, new RecoveryCallback<Object>() {
+//            @Override
+//            public Object recover(RetryContext retryContext) throws Exception {
+//                return retryService.recoverTemplate();
+//            }
+//        });
 
         //lambda
-        template.execute((RetryCallback<Object, Throwable>) retryContext -> springRetryService.testTemplateRetry(0.6), retryContext -> springRetryService.recoverTemplate());
+        template.execute(retryContext -> retryService.testTemplateRetry(0.6), retryContext -> retryService.recoverTemplate());
+    }
+
+    @Test
+    public void testGuavaRetry() {
+        //normal
+//        Callable<Boolean> callable = new Callable<Boolean>() {
+//            @Override
+//            public Boolean call() throws Exception {
+//                retryService.guavaRetry(0.6);
+//                return true;
+//            }
+//        };
+
+        //lambda
+        Callable<Boolean> callable = () -> {
+            retryService.guavaRetry(0.6);
+            return true;
+        };
+
+        Retryer<Boolean> retry = RetryerBuilder.<Boolean>newBuilder().retryIfExceptionOfType(RemoteAccessException.class).withStopStrategy(StopStrategies.stopAfterAttempt(3)).build();
+        try {
+            retry.call(callable);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (RetryException e) {
+            System.out.println("retry failed");
+        }
     }
 }
