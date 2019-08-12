@@ -9,7 +9,7 @@ package com.yinan.play.demo.service;
 /**
  * @author Yinan Zhang (zhangyinan01@corp.netease.com)
  */
-public interface RetryService {
+public interface SpringRetryService {
 
     /**
      * 测试Spring-retry
@@ -26,7 +26,7 @@ public interface RetryService {
     void testOtherRetry(double param);
 
     /**
-     * 测试Spring-retry
+     * 测试Spring-retry template
      *
      * @param param
      */

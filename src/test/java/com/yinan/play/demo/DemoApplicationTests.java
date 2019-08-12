@@ -1,6 +1,6 @@
 package com.yinan.play.demo;
 
-import com.yinan.play.demo.service.RetryService;
+import com.yinan.play.demo.service.SpringRetryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import java.util.Collections;
 public class DemoApplicationTests {
 
     @Autowired
-    RetryService retryService;
+    private SpringRetryService springRetryService;
 
     @Test
     public void contextLoads() {
@@ -29,7 +29,7 @@ public class DemoApplicationTests {
     @Test
     public void testRetry() {
         try {
-            retryService.testOtherRetry(0.6);
+            springRetryService.testOtherRetry(0.6);
         } catch (RemoteAccessException e) {
             e.printStackTrace();
         }
@@ -45,15 +45,15 @@ public class DemoApplicationTests {
         template.execute(new RetryCallback<Object, Throwable>() {
             @Override
             public Object doWithRetry(RetryContext retryContext) throws Throwable {
-                return retryService.testTemplateRetry(0.6);
+                return springRetryService.testTemplateRetry(0.6);
             }
         }, new RecoveryCallback<Object>() {
             @Override
             public Object recover(RetryContext retryContext) throws Exception {
-                return retryService.recoverTemplate();
+                return springRetryService.recoverTemplate();
             }
         });
 
-        template.execute((RetryCallback<Object, Throwable>) retryContext -> retryService.testTemplateRetry(0.6), retryContext -> retryService.recoverTemplate());
+        template.execute((RetryCallback<Object, Throwable>) retryContext -> springRetryService.testTemplateRetry(0.6), retryContext -> springRetryService.recoverTemplate());
     }
 }

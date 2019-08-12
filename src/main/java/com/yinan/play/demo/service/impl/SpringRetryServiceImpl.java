@@ -6,7 +6,7 @@
  */
 package com.yinan.play.demo.service.impl;
 
-import com.yinan.play.demo.service.RetryService;
+import com.yinan.play.demo.service.SpringRetryService;
 import org.springframework.remoting.RemoteAccessException;
 import org.springframework.retry.annotation.Recover;
 import org.springframework.retry.annotation.Retryable;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @author Yinan Zhang (zhangyinan01@corp.netease.com)
  */
 @Service
-public class RetryServiceImpl implements RetryService {
+public class SpringRetryServiceImpl implements SpringRetryService {
     private static final double THRESHOLD = 0.5;
 
     @Override
