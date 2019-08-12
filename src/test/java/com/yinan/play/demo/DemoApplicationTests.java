@@ -42,6 +42,7 @@ public class DemoApplicationTests {
         RetryTemplate template = new RetryTemplate();
         template.setRetryPolicy(policy);
 
+        //normal
         template.execute(new RetryCallback<Object, Throwable>() {
             @Override
             public Object doWithRetry(RetryContext retryContext) throws Throwable {
@@ -54,6 +55,7 @@ public class DemoApplicationTests {
             }
         });
 
+        //lambda
         template.execute((RetryCallback<Object, Throwable>) retryContext -> springRetryService.testTemplateRetry(0.6), retryContext -> springRetryService.recoverTemplate());
     }
 }
