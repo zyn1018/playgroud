@@ -28,8 +28,8 @@ public class RetryServiceImpl implements RetryService {
      * note: exceptionExpression, include 只能有一个
      *
      * @param param
-     * @throws ServiceUnavailableException
-     * @throws ServerException
+     * @throws ServiceUnavailableException 参数大于0.5时抛出
+     * @throws ServerException             参数小于等于0.5时抛出
      */
     @Override
     @Retryable(exceptionExpression = "#{message.contains('server exception retry')}", include = {ServiceUnavailableException.class}, maxAttempts = 3, backoff = @Backoff(delay = 1000L))
