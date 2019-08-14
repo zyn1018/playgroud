@@ -68,4 +68,9 @@ public class RetryServiceImpl implements RetryService {
     public void retry(RemoteAccessException e, double param) {
         System.out.println("using @Recover recovering: " + param);
     }
+
+    @Recover
+    public void retryOther(RemoteAccessException e, double otherParam) {
+        System.out.println("using other recovering: " + otherParam);
+    }
 }

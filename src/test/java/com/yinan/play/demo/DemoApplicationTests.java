@@ -4,6 +4,7 @@ import com.github.rholder.retry.RetryException;
 import com.github.rholder.retry.Retryer;
 import com.github.rholder.retry.RetryerBuilder;
 import com.github.rholder.retry.StopStrategies;
+import com.google.common.base.Predicates;
 import com.yinan.play.demo.service.RetryService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,7 +80,11 @@ public class DemoApplicationTests {
             return true;
         };
 
-        Retryer<Boolean> retry = RetryerBuilder.<Boolean>newBuilder().retryIfExceptionOfType(RemoteAccessException.class).withStopStrategy(StopStrategies.stopAfterAttempt(3)).build();
+        Retryer<Boolean> retry = RetryerBuilder.<Boolean>newBuilder()
+                .retryIfResult(Predicates.<Boolean>isNull())
+                .retryIfExceptionOfType(RemoteAccessException.class)
+                .withStopStrategy(StopStrategies.stopAfterAttempt(3))
+                .build();
         try {
             retry.call(callable);
         } catch (ExecutionException e) {
