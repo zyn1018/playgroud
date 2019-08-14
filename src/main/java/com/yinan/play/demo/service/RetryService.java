@@ -6,40 +6,41 @@
  */
 package com.yinan.play.demo.service;
 
+import javax.naming.ServiceUnavailableException;
+import java.rmi.ServerException;
+
 /**
  * @author Yinan Zhang (zhangyinan01@corp.netease.com)
  */
 public interface RetryService {
 
     /**
-     * 测试Spring-retry
+     * 注解形式的Spring-retry
      *
      * @param param
+     * @throws ServiceUnavailableException > 0.5
+     * @throws ServerException             <= 0.5
      */
-    void testRetry(double param);
+    void retryByAnnotation(double param) throws ServiceUnavailableException, ServerException;
 
     /**
-     * 测试Spring-retry
+     * Spring-retry template
      *
      * @param param
-     */
-    void testOtherRetry(double param);
-
-    /**
-     * 测试Spring-retry template
-     *
-     * @param param
-     */
-    boolean testTemplateRetry(double param);
-
-    /**
-     * 恢复template
      * @return
      */
-    boolean recoverTemplate();
+    boolean retryByTemplate(double param);
+
+    /**
+     * spring retry template的recover方法
+     *
+     * @return
+     */
+    boolean recoverByTemplate();
 
     /**
      * guava-retry
+     *
      * @param param
      */
     void guavaRetry(double param);
