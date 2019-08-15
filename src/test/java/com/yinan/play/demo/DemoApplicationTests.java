@@ -39,7 +39,7 @@ public class DemoApplicationTests {
     @Test
     public void testRetry() {
         try {
-            retryService.retryByAnnotation(0.5);
+            retryService.retryByAnnotation(0.6);
         } catch (RemoteAccessException | ServiceUnavailableException | ServerException e) {
             e.printStackTrace();
         }
