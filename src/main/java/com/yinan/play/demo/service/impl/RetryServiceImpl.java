@@ -25,8 +25,6 @@ public class RetryServiceImpl implements RetryService {
     private static final double THRESHOLD = 0.5;
 
     /**
-     * note: exceptionExpression, include 只能有一个
-     *
      * @param param
      * @throws ServiceUnavailableException 参数大于0.5时抛出
      * @throws ServerException             参数小于等于0.5时抛出
