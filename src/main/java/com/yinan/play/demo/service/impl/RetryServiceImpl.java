@@ -30,7 +30,10 @@ public class RetryServiceImpl implements RetryService {
      * @throws ServerException             参数小于等于0.5时抛出
      */
     @Override
-    @Retryable(include = {ServiceUnavailableException.class}, exceptionExpression = "#{message.contains('server exception retry')}", maxAttempts = 3, backoff = @Backoff(delay = 1000L))
+    @Retryable(include = {ServiceUnavailableException.class},
+            exceptionExpression = "#{message.contains('server exception retry')}",
+            maxAttempts = 3,
+            backoff = @Backoff(delay = 1000L))
     public void retryByAnnotation(double param) throws ServiceUnavailableException, ServerException {
         System.out.println("start testing retry");
         if (param > THRESHOLD) {
